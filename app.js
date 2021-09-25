@@ -64,12 +64,11 @@ const galleryItems = [
   },
 ];
 
-const galleryListRef = document.querySelector('.js-gallery');
-
 const createGalleryMarkup = images => {
-  return images.map(
-    ({ preview, original, description }) =>
-      `<li class="gallery__item">
+  return images
+    .map(
+      ({ preview, original, description }) =>
+        `<li class="gallery__item">
   <a
     class="gallery__link"
     href="${original}"
@@ -81,10 +80,37 @@ const createGalleryMarkup = images => {
       alt="${description}"
     />
   </a>
-</li>`
-  ).join('');
+</li>`,
+    )
+    .join('');
 };
 
+const galleryListRef = document.querySelector('.js-gallery');
+const modalWindowRef = document.querySelector('div.lightbox.js-lightbox');
+const closeModalWindowButtonRef = document.querySelector('.lightbox__button');
+const modalWindowImageRef = document.querySelector('.lightbox__image');
+
 const galleryItemsMarkup = createGalleryMarkup(galleryItems);
+
 galleryListRef.insertAdjacentHTML('beforeend', galleryItemsMarkup);
 
+const onImageClick = e => {
+  e.preventDefault();
+
+  const target = e.target;
+  if (target.nodeName !== 'IMG') return;
+  openModalWindow(modalWindowRef);
+  modalWindowImageRef.src = target.dataset.source;
+};
+
+const openModalWindow = e => {
+  e.classList.toggle('is-open');
+};
+
+const closeModalWindow = () => {
+  modalWindowRef.classList.toggle('is-open');
+  modalWindowImageRef.src = '';
+};
+
+galleryListRef.addEventListener('click', onImageClick);
+closeModalWindowButtonRef.addEventListener('click', closeModalWindow);
